@@ -25,6 +25,33 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+
+/**
+ * Para poner a correr el huellero se debe instalar el software de este mismo, 
+ * luego en este proyecto se debe incluir las librerias
+ * mysql-connector-java-5.1.44-bin.jar
+ * dpfpenrollment.jar
+ * dpfpverification.jar
+ * dpotapi.jar
+ * dpotjni.jar
+ * 
+ * se debe en la carpeta lib/ tambien incluir un archivo config.cfg
+ * el cual contiene 
+ * empresa:10
+ * server:52.67.236.75
+ * database:dbsalud_as;
+ * user:secretaria28
+ * password:NATALIA
+ * 
+ * corre sobre windows 
+ * utiliza jdk8 osea jre8 osea java8
+ * 
+ * tambien se adiciona un archivo bat que inicia el programa con un java -jar Huellero.jar
+ * 
+ * 
+ * 
+ * @author andres
+ */
 public class CapturarHuella extends javax.swing.JDialog {
     String empresaID = "10";    
  
