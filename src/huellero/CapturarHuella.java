@@ -1,6 +1,5 @@
 package huellero;
 
- 
 import com.digitalpersona.onetouch.*;
 import com.digitalpersona.onetouch.capture.DPFPCapture;
 import com.digitalpersona.onetouch.capture.event.*;
@@ -25,36 +24,10 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-
-/**
- * Para poner a correr el huellero se debe instalar el software de este mismo, 
- * luego en este proyecto se debe incluir las librerias
- * mysql-connector-java-5.1.44-bin.jar
- * dpfpenrollment.jar
- * dpfpverification.jar
- * dpotapi.jar
- * dpotjni.jar
- * 
- * se debe en la carpeta lib/ tambien incluir un archivo config.cfg
- * el cual contiene 
- * empresa:10
- * server:52.67.236.75
- * database:dbsalud_as;
- * user:secretaria28
- * password:NATALIA
- * 
- * corre sobre windows 
- * utiliza jdk8 osea jre8 osea java8
- * 
- * tambien se adiciona un archivo bat que inicia el programa con un java -jar Huellero.jar
- * 
- * 
- * 
- * @author andres
- */
 public class CapturarHuella extends javax.swing.JDialog {
-    String empresaID = "10";    
- 
+
+    String empresaID = "10";
+
     public CapturarHuella() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -66,36 +39,36 @@ public class CapturarHuella extends javax.swing.JDialog {
         txtArea.setEditable(false);
         //***Asignar datos de configuracion
         asignarConfiguracion();
-        
+
     }
-    
-    protected void asignarConfiguracion(){
-      Map configuracion = null;
-      try {
-        //***
-        configuracion = Huellero.readSystemConfig(Variables.ubicacionArchivoConfiguracion);
+
+    protected void asignarConfiguracion() {
+        Map configuracion = null;
+        try {
+            //***
+            configuracion = Huellero_old.readSystemConfig(Variables.ubicacionArchivoConfiguracion);
         } catch (FileNotFoundException ex) {
-          String mens = "Archivo no encontrado para asignar la configuracion, se estableceran parametros por defecto";
-          EnviarTexto(mens);
-        System.out.println(mens);
-        return;
-      } catch (IOException ex) {
-        Logger.getLogger(CapturarHuella.class.getName()).log(Level.SEVERE, null, ex);
-        ex.printStackTrace();
-      }
-      if(configuracion == null){
-        System.out.println("configuracion null");
-        return;
-      }
-      if(configuracion.get("empresa") == null){
-        System.out.println("No encontre empresa en el mapa de configuración");
-        return;
-      }
+            String mens = "Archivo no encontrado para asignar la configuracion, se estableceran parametros por defecto";
+            EnviarTexto(mens);
+            System.out.println(mens);
+            return;
+        } catch (IOException ex) {
+            Logger.getLogger(CapturarHuella.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
+        }
+        if (configuracion == null) {
+            System.out.println("configuracion null");
+            return;
+        }
+        if (configuracion.get("empresa") == null) {
+            System.out.println("No encontre empresa en el mapa de configuración");
+            return;
+        }
         empresaID = (String) configuracion.get("empresa");
         empresaID = empresaID.trim();
-        System.out.println("Asigno empresa con "+empresaID);
+        System.out.println("Asigno empresa con " + empresaID);
     }
- 
+
     @SuppressWarnings("unchecked")
 // <editor-fold defaultstate="collapsed" desc="Generated Code">
     private void initComponents() {
@@ -269,7 +242,7 @@ public class CapturarHuella extends javax.swing.JDialog {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {
         stop();
     }
- 
+
 //Varible que permite iniciar el dispositivo de lector de huella conectado
 // con sus distintos metodos.
     private DPFPCapture Lector = DPFPGlobal.getCaptureFactory().createCapture();
@@ -287,7 +260,6 @@ public class CapturarHuella extends javax.swing.JDialog {
     private DPFPTemplate template;
     public static String TEMPLATE_PROPERTY = "template";
 
- 
     protected void Iniciar() {
         Lector.addDataListener(new DPFPDataAdapter() {
             @Override
@@ -352,11 +324,9 @@ public class CapturarHuella extends javax.swing.JDialog {
         });
     }
 
-  
     public DPFPFeatureSet featuresinscripcion;
     public DPFPFeatureSet featuresverificacion;
 
- 
     public void ProcesarCaptura(DPFPSample sample) {
 // Procesar la muestra de la huella y crear un conjunto de características con el propósito de inscripción.
         featuresinscripcion = extraerCaracteristicas(sample, DPFPDataPurpose.DATA_PURPOSE_ENROLLMENT);
@@ -405,7 +375,6 @@ public class CapturarHuella extends javax.swing.JDialog {
         }
     }
 
- 
     public DPFPFeatureSet extraerCaracteristicas(DPFPSample sample, DPFPDataPurpose purpose) {
         DPFPFeatureExtraction extractor = DPFPGlobal.getFeatureExtractionFactory().createFeatureExtraction();
         try {
@@ -414,128 +383,121 @@ public class CapturarHuella extends javax.swing.JDialog {
             return null;
         }
     }
- 
+
     public Image CrearImagenHuella(DPFPSample sample) {
         return DPFPGlobal.getSampleConversionFactory().createImage(sample);
     }
 
-  
     public void DibujarHuella(Image image) {
         lblImagenHuella.setIcon(new ImageIcon(
                 image.getScaledInstance(lblImagenHuella.getWidth(), lblImagenHuella.getHeight(), Image.SCALE_DEFAULT)));
         repaint();
     }
 
-    
     public void EstadoHuellas() {
         EnviarTexto("Muestra de Huellas Necesarias para Guardar Template " + Reclutador.getFeaturesNeeded());
     }
 
-   
     public void EnviarTexto(String string) {
         txtArea.append(string + "\n");
     }
 
-   
     public void start() {
         Lector.startCapture();
         EnviarTexto("Utilizando el Lector de Huella Dactilar ");
     }
 
- 
     public void stop() {
         Lector.stopCapture();
         EnviarTexto("No se está usando el Lector de Huella Dactilar ");
     }
 
-  
     public DPFPTemplate getTemplate() {
         return template;
     }
 
- 
     public void setTemplate(DPFPTemplate template) {
         DPFPTemplate old = this.template;
         this.template = template;
         firePropertyChange(TEMPLATE_PROPERTY, old, template);
     }
 
-   
-    ConexionBD con = new ConexionBD();
+    ConexionBD_old con = new ConexionBD_old();
 
-    
     public void guardarHuella() {
-      System.out.println("En guardar huella empresa tiene "+empresaID);
+
         //Obtiene los datos del template de la huella actual
         ByteArrayInputStream datosHuella = new ByteArrayInputStream(template.serialize());
         Integer tamañoHuella = template.serialize().length;
 
         //Capturamos los datos del usuario
         String cedula = JOptionPane.showInputDialog("No. Identificacion:");
-        String sql="SELECT ter.huella  \n" +
-                "FROM con_tercero ter \n" +
-                "WHERE "+
-                "ter.empresa_id ="+empresaID+" \n" +
-                "AND ter.documento = '"+cedula+"'";
-        try 
-        {
+        System.out.println("En guardar huella empresa tiene " + empresaID + " cedula " + cedula);
+        String sql = "SELECT ter.huella  \n"
+                + "FROM con_tercero ter \n"
+                + "WHERE "
+                + "ter.empresa_id =" + empresaID + " \n"
+                + "AND ter.documento = '" + cedula + "'";
+        try {
             //Establece los valores para la sentencia SQL
             Connection c = con.conectar(); //establece la conexion con la BD
-            
+
             PreparedStatement verificaCedulaUsuario = c.prepareStatement(sql);
             ResultSet rs = verificaCedulaUsuario.executeQuery();
-            
+            //System.out.println("existe "+rs.first()+" documento "+cedula);
             if (rs.next()) {
-                
-                        //Lee la plantilla de la base de datos
-                    byte templateBuffer[] = rs.getBytes(1);
-                    //Crea una nueva plantilla a partir de la guardada en la base de datos
-                    if(templateBuffer!=null)
-                    {
-                        DPFPTemplate referenceTemplate = DPFPGlobal.getTemplateFactory().createTemplate(templateBuffer);
-                        //Envia la plantilla creada al objeto contendor de Template del componente de huella digital
-                        setTemplate(referenceTemplate);
+
+                //Lee la plantilla de la base de datos
+                byte templateBuffer[] = rs.getBytes(1);
+                //Crea una nueva plantilla a partir de la guardada en la base de datos
+                System.out.println("templateBuffer es " + templateBuffer + " si es nulo actualiza la base de datos, de lo contrario compara");
+                if (templateBuffer != null) {
+                    System.out.println("Se ha encontrado una huella en la base de datos, se comparara con la que se esta ingresando");
+                    DPFPTemplate referenceTemplate = DPFPGlobal.getTemplateFactory().createTemplate(templateBuffer);
+                    //Envia la plantilla creada al objeto contendor de Template del componente de huella digital
+                    setTemplate(referenceTemplate);
                         // Compara las caracteriticas de la huella recientemente capturda con la
-                        // plantilla guardada al usuario especifico en la base de datos
-                    
-                         DPFPVerificationResult result = Verificador.verify(featuresverificacion, getTemplate());
+                    // plantilla guardada al usuario especifico en la base de datos
 
-                         //compara las plantilas (actual vs bd)
-                        if (result.isVerified())
-                        {
-                            JOptionPane.showMessageDialog(null, "La huella ya existe, coloque un dedo diferente");
-                        }
-                             
-                    }else
-                    {
-                    
-                      String sql2="	UPDATE con_tercero ter\n" +
-                            "		SET huella =? \n" +
-                            "	WHERE "+
-                            "	ter.empresa_id = "+empresaID+"\n" +
-                            "	AND ter.documento = '"+cedula+"'\n";
+                    DPFPVerificationResult result = Verificador.verify(featuresverificacion, getTemplate());
 
-                        PreparedStatement guardarStmt2 = c.prepareStatement(sql2);
-                        guardarStmt2.setBinaryStream(1, datosHuella,tamañoHuella);
-                        //Ejecuta la sentencia
-                        guardarStmt2.execute();
-                        guardarStmt2.close();
-                        JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
+                    //compara las plantilas (actual vs bd)
+                    if (result.isVerified()) {
+                        System.out.println("La huella encontrada corresponde con la que acaba de ingresar");
+                        JOptionPane.showMessageDialog(null, "La huella ya existe");
+                    } else {
+                        System.out.println("La huella encontrada no corresponde con la que acaba de ingresar");
+                        actualizarHuella(cedula, c, datosHuella, tamañoHuella);
                     }
-                    
-                    
+
+                } else {
+                    actualizarHuella(cedula, c, datosHuella, tamañoHuella);
+                    /*                      String sql2="	UPDATE con_tercero ter\n" +
+                     "		SET huella =? \n" +
+                     "	WHERE "+
+                     "	ter.empresa_id = "+empresaID+"\n" +
+                     "	AND ter.documento = '"+cedula+"'\n";
+
+                     PreparedStatement guardarStmt2 = c.prepareStatement(sql2);
+                     guardarStmt2.setBinaryStream(1, datosHuella,tamañoHuella);
+                     //Ejecuta la sentencia
+                     guardarStmt2.execute();
+                     guardarStmt2.close();
+                     JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");*/
                 }
-                else if(!rs.next()){
-                 /*   String nombre = JOptionPane.showInputDialog("Nombre y Apellidos:");
-                    PreparedStatement guardarStmt = c.prepareStatement("INSERT INTO con_tercero(identificacion_usuario, nombres_usuario, huella1_usuario, huella2_usuario) values(?,?,?,'')");
-                    guardarStmt.setInt(1,Integer.parseInt(cedula));
-                    guardarStmt.setString(2,nombre);
-                    guardarStmt.setBinaryStream(3, datosHuella,tamañoHuella);
-                    //Ejecuta la sentencia
-                    guardarStmt.execute();
-                    guardarStmt.close();
-                    JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
-                                 */
+
+            } else if (!rs.next()) {
+                JOptionPane.showMessageDialog(null,"No se encuentra registrada la cedula "+cedula+" en la empresa "+empresaID);
+                /*   String nombre = JOptionPane.showInputDialog("Nombre y Apellidos:");
+                 PreparedStatement guardarStmt = c.prepareStatement("INSERT INTO con_tercero(identificacion_usuario, nombres_usuario, huella1_usuario, huella2_usuario) values(?,?,?,'')");
+                 guardarStmt.setInt(1,Integer.parseInt(cedula));
+                 guardarStmt.setString(2,nombre);
+                 guardarStmt.setBinaryStream(3, datosHuella,tamañoHuella);
+                 //Ejecuta la sentencia
+                 guardarStmt.execute();
+                 guardarStmt.close();
+                 JOptionPane.showMessageDialog(null,"Huella Guardada Correctamente");
+                 */
             }
 
             //con.desconectar();
@@ -545,21 +507,36 @@ public class CapturarHuella extends javax.swing.JDialog {
             ex.printStackTrace();
         }
         /*
-        finally{
-        con.desconectar();
-        }
-        */
+         finally{
+         con.desconectar();
+         }
+         */
     }
 
-     
+    private void actualizarHuella(String cedula, Connection c, ByteArrayInputStream datosHuella, Integer tamañoHuella) throws Exception {
+        //***Se asigna null al campo y luego se asigna el dato que viene al campo
+        String sql2 = "	UPDATE con_tercero ter\n"
+                + "		SET huella =? \n"
+                + "	WHERE "
+                + "	ter.empresa_id = " + empresaID + "\n"
+                + "	AND ter.documento = '" + cedula + "'\n";
+
+        PreparedStatement guardarStmt2 = c.prepareStatement(sql2);
+        guardarStmt2.setBinaryStream(1, datosHuella, tamañoHuella);
+        //Ejecuta la sentencia
+        guardarStmt2.execute();
+        guardarStmt2.close();
+        JOptionPane.showMessageDialog(null, "Huella Guardada Correctamente");
+    }
+
     public void identificarHuella() throws IOException {
         try {
-            
+
             //Establece los valores para la sentencia SQL
             Connection c = con.conectar();
-            String identificarSQL="SELECT ter.huella,nombre_completo(ter.id) as nombre_completo \n" +
-            "	FROM con_tercero ter\n" +
-            "	WHERE ter.empresa_id="+empresaID;
+            String identificarSQL = "SELECT ter.huella,nombre_completo(ter.id) as nombre_completo \n"
+                    + "	FROM con_tercero ter\n"
+                    + "	WHERE ter.empresa_id=" + empresaID;
 
             System.out.println(identificarSQL);
             //Obtiene todas las huellas de la bd
@@ -576,12 +553,12 @@ public class CapturarHuella extends javax.swing.JDialog {
                 System.out.println("Contador:" + i + "\n");
                 byte templateBuffer[] = rsIdentificar.getBytes("huella");
                 //***Se adiciona validacion para evitar nullPointerException
-                if(templateBuffer == null){
-                  continue;
+                if (templateBuffer == null) {
+                    continue;
                 }
                 System.out.println(templateBuffer);
                 //Crea una nueva plantilla a partir de la guardada en la base de datos
-                
+
                 DPFPTemplate referenceTemplate = DPFPGlobal.getTemplateFactory().createTemplate(templateBuffer);
                 //Envia la plantilla creada al objeto contendor de Template del componente de huella digital
                 setTemplate(referenceTemplate);
@@ -594,36 +571,34 @@ public class CapturarHuella extends javax.swing.JDialog {
                 //Si encuentra correspondencia dibuja el mapa
                 //e indica el nombre de la persona que coincidió.
                 if (result.isVerified()) {
-                  encontradoHuella = true;
+                    encontradoHuella = true;
                     break;
-                //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
+                    //crea la imagen de los datos guardado de las huellas guardadas en la base de datos
 //                    JOptionPane.showMessageDialog(null, "Bienvenido " + rsIdentificar.getString("nombre_completo"));
 //                    return;
                 }/*else
-                {
-                    JOptionPane.showMessageDialog(null,"no esta almacenado");
-                }*/
-                
-        }
+                 {
+                 JOptionPane.showMessageDialog(null,"no esta almacenado");
+                 }*/
+
+            }
             //***Se valida si se ha encontrado la huella o no en la busqueda previa
-          if(encontradoHuella){
-            JOptionPane.showMessageDialog(null, "Bienvenido " + rsIdentificar.getString("nombre_completo"));
-          }else{
-            JOptionPane.showMessageDialog(null,"no esta almacenado");
-          }
-            
-            
+            if (encontradoHuella) {
+                JOptionPane.showMessageDialog(null, "Bienvenido " + rsIdentificar.getString("nombre_completo"));
+            } else {
+                JOptionPane.showMessageDialog(null, "no esta almacenado");
+            }
+
         //Si no encuentra alguna huella que coincida lo indica con un mensaje
-        //JOptionPane.showMessageDialog(null, "No existe ningún registro que coincida con la huella.");
+            //JOptionPane.showMessageDialog(null, "No existe ningún registro que coincida con la huella.");
         } catch (SQLException e) {
             System.out.println("Se produjo el siguiente error: " + e.getMessage());
             e.printStackTrace();
-        }
-        finally{
+        } finally {
             con.desconectar();
         }
     }
- 
+
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -632,7 +607,6 @@ public class CapturarHuella extends javax.swing.JDialog {
         });
     }
 
- 
 // Variables declaration – do not modify
     private javax.swing.JButton btnGuardar;
     private javax.swing.JButton btnIdentificar;

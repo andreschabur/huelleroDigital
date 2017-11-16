@@ -28,7 +28,13 @@ public class ConexionBD {
    * user="root"; public String pass=""; Connection conn=null;
    */
 //  public String puerto = "8080";
-  public String nomservidor = "10.25.30.60";
+  /*Parametros app interna
+    public String nomservidor = "10.25.30.60";
+  public String db = "dbsalud_as";
+  public String user = "apperp";
+  public String pass = "sql123";*/
+    /*Parametros app externa*/
+    public String nomservidor = "52.67.236.75";
   public String db = "dbsalud_as";
   public String user = "apperp";
   public String pass = "sql123";
@@ -82,7 +88,7 @@ public class ConexionBD {
     Map configuracion = null;
     try {
       //***}
-      configuracion = Huellero.readSystemConfig(Variables.ubicacionArchivoConfiguracion);
+      configuracion = Huellero_old.readSystemConfig(Variables.ubicacionArchivoConfiguracion);
     } catch (FileNotFoundException ex) {
       String mens = "Archivo no encontrado para asignar la configuracion en ConexionBD, se estableceran parametros por defecto";
 //          EnviarTexto(mens);
