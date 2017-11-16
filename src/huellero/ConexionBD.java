@@ -29,15 +29,15 @@ public class ConexionBD {
    */
 //  public String puerto = "8080";
   /*Parametros app interna
-    public String nomservidor = "10.25.30.60";
-  public String db = "dbsalud_as";
-  public String user = "apperp";
-  public String pass = "sql123";*/
+    public String nomservidor = "";
+  public String db = "";
+  public String user = "";
+  public String pass = "";*/
     /*Parametros app externa*/
-    public String nomservidor = "52.67.236.75";
-  public String db = "dbsalud_as";
-  public String user = "apperp";
-  public String pass = "sql123";
+    public String nomservidor = "";
+  public String db = "";
+  public String user = "";
+  public String pass = "";
   Connection conn = null;
 
   /**
